@@ -1,0 +1,42 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>YT Saver</title>
+    <link rel="stylesheet" href="{% static 'app/css/style.css' %}"/>
+</head>
+<body>
+    <h1>YouTube Downloader</h1>
+    <p id="p_url">Enter the Youtube url:</p>
+    <div id="form_div">
+        <form method="post" action="">
+            {% csrf_token %}
+            <!-- for fetching the video -->
+            <input type="text" name="given_url" value="{{url}}" placeholder="https://www.youtube.com/watch?v=...">
+            <button type="submit" name="fetch-vid" value="fetch-vid">Proceed</button>
+
+            <br>
+                <div id="img_div">
+                    <h3>{{vidTitle}}</h3>
+                    <img src="{{vidThumbnail}}"/>
+                </div>
+            <br>
+
+            <!-- for downloading the video -->
+            <div id="res_div">
+                {% for x in stream %}
+                    {{x.resolution}} <button class="res_button" type="submit" name="download-vid" value="{{forloop.counter}}">Download</button>|
+                {% endfor %}
+            </div>
+            <div>
+                {% if stream %}
+                    Audio only <button class="res_button" type="submit" name="download-vid" value="{{'audio_only'}}">Download</button>
+                {% endif %}
+            </div>
+            <br><br>
+        </form>
+    </div>
+</body>
+</html>
