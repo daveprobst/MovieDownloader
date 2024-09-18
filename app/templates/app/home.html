@@ -26,12 +26,12 @@
 
             <!-- for downloading the video -->
             <div id="res_div">
-                {% for x in stream %}
-                    {{x.resolution}} <button class="res_button" type="submit" name="download-vid" value="{{forloop.counter}}">Download</button>|
+                {% for sel_idx,x in stream_and_sel_idx_list %}
+                    {{x.resolution}}<button class="res_button" type="submit" name="download-vid" value="{{sel_idx}}">Download</button>|
                 {% endfor %}
             </div>
             <div>
-                {% if stream %}
+                {% if stream_and_sel_idx_list %}
                     Audio only <button class="res_button" type="submit" name="download-vid" value="{{'audio_only'}}">Download</button>
                 {% endif %}
             </div>
