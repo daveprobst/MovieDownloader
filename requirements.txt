@@ -2,7 +2,9 @@ asgiref==3.8.1
 certifi==2024.8.30
 charset-normalizer==3.3.2
 Django==5.1.1
+gunicorn==23.0.0
 idna==3.9
+packaging==24.1
 pytubefix==6.16.2
 setuptools==72.1.0
 sqlparse==0.5.1
