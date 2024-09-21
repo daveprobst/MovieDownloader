@@ -62,3 +62,13 @@ img {
 .res_button {
     margin: 5px 0.5% 5px 0.5%;
 }
+
+@media only screen and (max-width:1000px) {
+    input {
+        width: 80%;
+    }
+
+    button {
+        width: 15%;
+    }
+}
