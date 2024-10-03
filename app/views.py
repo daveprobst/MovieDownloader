@@ -65,21 +65,18 @@ class home(View):
             try:
                 video = YouTube(self.url)
                 req_post_get_downl_vid=request.POST.get('download-vid')
-                if req_post_get_downl_vid!='audio_only':
-                    chosen_qual = video.streams.filter(mime_type='video/mp4',only_video=True)[int(req_post_get_downl_vid)] #selects the right videofile!
-                    print('selected:',chosen_qual.resolution) # for check (resolution)
-
-                chosen_qual_audio = video.streams.filter(only_audio=True,mime_type='audio/mp4')[-1]     
-
-                if req_post_get_downl_vid!='audio_only':
-                    video_file = chosen_qual.download(output_path=vid_output_path)
+                chosen_qual_audio = video.streams.filter(only_audio=True,mime_type='audio/mp4')[-1] 
                 audio_file = chosen_qual_audio.download(output_path=aud_output_path)
                 video_filename = os.path.basename(audio_file)
 
                 if req_post_get_downl_vid!='audio_only':
-                    subprocess.run(['ffmpeg', '-i', video_file, '-i', audio_file, '-pix_fmt', 'yuv420p','-c:v','copy' ,'-c:a', 'aac', os.path.join(fin_output_path,video_filename)])
+                    chosen_qual = video.streams.filter(mime_type='video/mp4',only_video=True)[int(req_post_get_downl_vid)] #selects the right videofile!
+                    print('selected:',chosen_qual.resolution) # for check (resolution)
+                    video_file = chosen_qual.download(output_path=vid_output_path)
+                    subprocess.run(['ffmpeg', '-loglevel', 'quiet', '-i', video_file, '-i', audio_file, '-pix_fmt', 'yuv420p','-c:v','copy' ,'-c:a', 'aac', os.path.join(fin_output_path,video_filename)]) #remove -loglevel quiet to see ffmpeg output again | or change it to a different loglevel
                     output_filename=video_filename
                 else:
+                    print('selected: audio_only')
                     output_filename=video_filename.strip('.mp4')+'.m4a'
                     def unique_thumbnail_name_append(url): #create unique string to append so that all saved thumbnails are unique!
                         if 'https://i.ytimg.com/vi' in url:
@@ -89,7 +86,7 @@ class home(View):
                             return ''
                     ut_name=unique_thumbnail_name_append(video.thumbnail_url)
                     thumbnail=urllib.request.urlretrieve(video.thumbnail_url,os.path.join(settings.MEDIA_ROOT,f'temp_audio/{ut_name}thumbnail.jpg'))[0]
-                    subprocess.run(['ffmpeg', '-i', audio_file, '-i', thumbnail, '-c', 'copy', '-disposition:v', 'attached_pic', os.path.join(fin_output_path,output_filename)]) #code that didn't work:                     subprocess.run(['ffmpeg', '-i', audio_file, '-i', thumbnail, '-c:a', 'aac', '-c:t', 'copy', '-disposition:v', 'attached_pic', os.path.join(fin_output_path,video_filename)])
+                    subprocess.run(['ffmpeg', '-loglevel', 'quiet', '-i', audio_file, '-i', thumbnail, '-c', 'copy', '-disposition:v', 'attached_pic', os.path.join(fin_output_path,output_filename)]) #optionally replace ['-c', 'copy',] with ['-c:a', 'aac']                  #code that didn't work:                     subprocess.run(['ffmpeg', '-i', audio_file, '-i', thumbnail, '-c:a', 'aac', '-c:t', 'copy', '-disposition:v', 'attached_pic', os.path.join(fin_output_path,video_filename)])
 
                 # Prepare the file response for downloading
                 response = FileResponse(open(os.path.join(fin_output_path,output_filename), 'rb'), as_attachment=True, filename=output_filename)  #<- ERROR

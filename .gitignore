@@ -1,0 +1,4 @@
+moviedownloader/__pycache__
+app/__pycache__
+app/migrations
+venv
